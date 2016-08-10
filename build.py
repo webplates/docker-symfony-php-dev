@@ -36,7 +36,7 @@ for image in MATRIX:
     os.makedirs(path, exist_ok=True)
     dockerfile = path + "/Dockerfile"
     php_version = semver.parse(image[0])
-    template.stream(parent=matrix_join(image, "-"), php_version="%d%d" % (php_version["major"], php_version["minor"]), subvariant=image[2]).dump(dockerfile)
+    template.stream(parent=matrix_join(image[0:2], "-"), php_version="%d%d" % (php_version["major"], php_version["minor"]), subvariant=image[2]).dump(dockerfile)
     paths.append(path)
     tags.append(set(get_tags(image)))
 

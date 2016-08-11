@@ -11,6 +11,7 @@ VERSIONS = ["5.5.38", "5.6.24", "7.0.9"]
 VARIANTS = ["fpm"]
 
 MATRIX = set(itertools.chain(
+    itertools.product(VERSIONS, [None], [None]),
     itertools.product(VERSIONS, VARIANTS, [None])
 ))
 

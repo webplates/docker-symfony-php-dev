@@ -1,4 +1,4 @@
-FROM webplates/symfony-php:5.6.24
+FROM webplates/symfony-php:5.6.25
 
 RUN set -ex \
     && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/56 \

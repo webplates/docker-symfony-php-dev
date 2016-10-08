@@ -7,7 +7,7 @@ from helper import *
 DIST = "dist"
 REPO = "webplates/symfony-php-dev"
 
-VERSIONS = ["5.4.45", "5.6.26", "7.0.11"]
+VERSIONS = ["5.6.26", "7.0.11"]
 VARIANTS = ["fpm"]
 
 MATRIX = set(itertools.chain(

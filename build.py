@@ -1,10 +1,10 @@
+from dockermatrix import *
+import getpass
 import itertools
-from jinja2 import Environment, FileSystemLoader
 import os
-import shutil
-from helper import *
 
-DIST = "dist"
+DIST = "images"
+BRANCH = "images"
 REPO = "webplates/symfony-php-dev"
 
 VERSIONS = ["5.6.26", "7.0.11"]
@@ -15,38 +15,14 @@ MATRIX = set(itertools.chain(
     itertools.product(VERSIONS, VARIANTS, [None])
 ))
 
-# Prepare Jinja
-env = Environment(loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__))))
+build_matrix = create_build_matrix(MATRIX)
+dockerfile_builder = DockerfileBuilder()
+hub_updater = HubUpdater(os.environ.get("DOCKERHUB_USERNAME"), os.environ.get("DOCKERHUB_PASSWORD", getpass.getpass("Enter Docker Hub password: ")))
 
-# Clear the dist folder
-if os.path.isdir(DIST):
-    shutil.rmtree(DIST, ignore_errors=True)
-os.mkdir(DIST)
+images = build_matrix.build(DIST)
 
-# Initialize state variables
-paths = []
-tags = []
+dockerfile_builder.build(images, DIST)
 
-# Initialize template
-template = env.get_template('Dockerfile.template')
-
-for image in MATRIX:
-    path = DIST + "/" + matrix_join((minorize(image[0]),) + image[1:], "/")
-    os.makedirs(path, exist_ok=True)
-    php_version = semver.parse(image[0])
-    template.stream(parent=matrix_join(image[0:2], "-"), php_version="%d%d" % (php_version["major"], php_version["minor"])).dump(path + "/Dockerfile")
-    paths.append(path)
-    tags.append(set(get_tags(image)))
-
-with open(".auth", "r") as f:
-    token = f.readline().rstrip()
-
-delete_builds(REPO, token)
-add_builds(REPO, token, paths, tags)
-
-FORMAT = "%-35s %s"
-print (FORMAT % ("PATH", "TAG"))
-
-for c1, c2 in zip(paths, tags):
-    for tag in c2:
-        print ("%-35s %s" % (c1, tag))
+hub_updater.login()
+hub_updater.clear_builds(REPO)
+hub_updater.add_builds(REPO, BRANCH, images)

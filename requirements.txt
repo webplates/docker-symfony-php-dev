@@ -1,3 +1,1 @@
-jinja2
-semver
-requests
+dockermatrix==0.1.1

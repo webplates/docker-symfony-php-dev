@@ -1,0 +1,25 @@
+machine:
+    python:
+        version: 3.5.1
+
+test:
+    override:
+        - exit 0
+
+compile:
+    override:
+        - python build.py --dockerhub
+
+deployment:
+    images:
+        branch: master
+        commands:
+            - ./.circle/deploy.sh
+
+general:
+    branches:
+        only:
+            - master
+
+    artifacts:
+        - images

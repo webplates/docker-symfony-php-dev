@@ -1,7 +1,9 @@
 from dockermatrix import *
+import argparse
 import getpass
 import itertools
 import os
+import sys
 
 DIST = "images"
 BRANCH = "images"
@@ -15,14 +17,38 @@ MATRIX = set(itertools.chain(
     itertools.product(VERSIONS, VARIANTS, [None])
 ))
 
+parser = argparse.ArgumentParser(description="Build option parse.")
+parser.add_argument("--dockerhub", action="store_true", default=False, help="Notify Docker Hub about rebuilt images")
+
+args = parser.parse_args()
+
 build_matrix = create_build_matrix(MATRIX)
 dockerfile_builder = DockerfileBuilder()
-hub_updater = HubUpdater(os.environ.get("DOCKERHUB_USERNAME"), os.environ.get("DOCKERHUB_PASSWORD", getpass.getpass("Enter Docker Hub password: ")))
+
+if args.dockerhub:
+    if "DOCKERHUB_USERNAME" not in os.environ or not os.environ["DOCKERHUB_USERNAME"]:
+        username = input("Enter Docker Hub username: ")
+    else:
+        username = os.environ["DOCKERHUB_USERNAME"]
+
+    if "DOCKERHUB_PASSWORD" not in os.environ or not os.environ["DOCKERHUB_PASSWORD"]:
+        password = getpass.getpass("Enter Docker Hub password: ")
+    else:
+        password = os.environ["DOCKERHUB_PASSWORD"]
+
+    hub_updater = HubUpdater(username, password)
+
+    try:
+        hub_updater.login()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
+
 
 images = build_matrix.build(DIST)
 
 dockerfile_builder.build(images, DIST)
 
-hub_updater.login()
-hub_updater.clear_builds(REPO)
-hub_updater.add_builds(REPO, BRANCH, images)
+if args.dockerhub:
+    hub_updater.clear_builds(REPO)
+    hub_updater.add_builds(REPO, BRANCH, images)

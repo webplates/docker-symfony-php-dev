@@ -2,13 +2,13 @@ machine:
     python:
         version: 3.5.1
 
-test:
-    override:
-        - exit 0
-
 compile:
     override:
         - python build.py --dockerhub
+
+test:
+    override:
+        - exit 0
 
 deployment:
     images:

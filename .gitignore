@@ -1,2 +1,4 @@
 /__pycache__/
 /images/
+/.circle/deploy
+/.circle/deploy.pub

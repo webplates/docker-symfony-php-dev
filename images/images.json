@@ -1,0 +1,38 @@
+{
+    "repo": "webplates/symfony-php-dev",
+    "branch": "images",
+    "images": [
+        {
+            "tags": [
+                "5.6.26-fpm",
+                "5-fpm",
+                "5.6-fpm"
+            ],
+            "path": "images/5.6/fpm"
+        },
+        {
+            "tags": [
+                "7-fpm",
+                "7.0.11-fpm",
+                "7.0-fpm"
+            ],
+            "path": "images/7.0/fpm"
+        },
+        {
+            "tags": [
+                "7.0.11",
+                "7.0",
+                "7"
+            ],
+            "path": "images/7.0"
+        },
+        {
+            "tags": [
+                "5.6",
+                "5",
+                "5.6.26"
+            ],
+            "path": "images/5.6"
+        }
+    ]
+}

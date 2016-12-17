@@ -15,6 +15,7 @@ deployment:
         branch: master
         commands:
             - ./.circle/deploy.sh
+            - python deploy.py
 
 general:
     branches:

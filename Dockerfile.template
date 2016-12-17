@@ -1,7 +1,7 @@
-FROM webplates/symfony-php:{{ data.get_formatted_version() }}{% if data.filter_options()|length > 0 %}-{{ data.filter_options()|join('-') }}{% endif %}
+FROM webplates/symfony-php:{{ build.get_formatted_version() }}{% if build.filter_options()|length > 0 %}-{{ build.filter_options()|join('-') }}{% endif %}
 
 RUN set -ex \
-    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/{{- data.version.major ~ data.version.minor }} \
+    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/{{- build.version.major ~ build.version.minor }} \
     && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
     && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
     && echo "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707" > $PHP_INI_DIR/conf.d/blackfire.ini \
